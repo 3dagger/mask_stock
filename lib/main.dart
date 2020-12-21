@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var response = await http.get(url);
     // 매우 중요함
     // utf8.decode 사용하는 이유 => 한글 깨짐 처리하기 위해, 하지만 전체 데이터가 String 덩어리로 들어옴
-    // 이를 해결하기위해 jsonDecode 메서드 사용 => json형태로 Decode 해줘야 Model 클래스에 담을 수 있
+    // 이를 해결하기위해 jsonDecode 메서드 사용 => json 형태로 Decode 해줘야 Model 클래스에 담을 수 있다
      logger.d('response.body: ${jsonDecode(utf8.decode(response.bodyBytes))}');
   }
 
