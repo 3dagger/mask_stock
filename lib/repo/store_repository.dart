@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:mask_stock/model/store.dart';
 
 class StoreRepository {
-  Future fetch() async {
+
+  Future fetch(double lat, double lng) async {
     var stores = List<Store>();
-    var url = 'https://gist.githubusercontent.com/junsuk5/bb7485d5f70974deee920b8f0cd1e2f0/raw/063f64d9b343120c2cb01a6555cf9b38761b1d94/sample.json?';
+    var url =
+        'https://gist.githubusercontent.com/junsuk5/bb7485d5f70974deee920b8f0cd1e2f0/raw/063f64d9b343120c2cb01a6555cf9b38761b1d94/sample.json?lat=$lat&lng=$lng';
 
     // 매우 중요함
     // get 은 Future 를 Return 함
@@ -16,14 +18,21 @@ class StoreRepository {
     // 이를 해결하기위해 jsonDecode 메서드 사용 => json 형태로 Decode 해줘야 Model 클래스에 담을 수 있다
 
     var response = await http.get(url);
+
     final jsonResult = jsonDecode(utf8.decode(response.bodyBytes));
+
     final jsonStores = jsonResult['stores'];
 
     // 상태가 변경되었을때 화면을 다시 그려주는 역할 => setState()
     // 값이 담겨있으면 초기화 (새로고침 기능을 만들기 위해)
-      jsonStores.forEach((e) {
-        stores.add(Store.fromJson(e));
-      });
-    return stores;
+    jsonStores.forEach((e) {
+      stores.add(Store.fromJson(e));
+    });
+//    return stores;
+    return stores.where((e) {
+      return e.remainStat == 'plenty' ||
+          e.remainStat == 'some' ||
+          e.remainStat == 'few';
+    }).toList();
   }
 }

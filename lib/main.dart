@@ -23,6 +23,8 @@ var logger = Logger(
 
 // Provider 는 최상위 위젯에 위치시키는게 효율적임
 void main() {
+  // GeoLocator Package 를 이용하기 위해선 runApp 전에 초기화 해줘야 함
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChangeNotifierProvider.value(
       value: StoreModel(),

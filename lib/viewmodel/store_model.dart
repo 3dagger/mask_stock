@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mask_stock/MyApplication.dart';
 import 'package:mask_stock/model/store.dart';
+import 'package:mask_stock/repo/location_repository.dart';
 import 'package:mask_stock/repo/store_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -11,9 +13,9 @@ class StoreModel with ChangeNotifier {
 
   // Dart 에서 _붙이면 Private 안붙이면 Public 임
   final _storeRepository = StoreRepository();
+  final _locationRepository = LocationRepository();
 
   StoreModel() {
-    myApplication.logger.d("실행 됨?");
     fetch();
   }
 
@@ -22,10 +24,11 @@ class StoreModel with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    stores = await _storeRepository.fetch();
+    Position position = await _locationRepository.getCurrentLocation();
+
+    stores = await _storeRepository.fetch(position.latitude, position.longitude);
 
     isLoading = false;
     notifyListeners();
   }
-
 }
