@@ -4,7 +4,6 @@ import 'package:mask_stock/MyApplication.dart';
 import 'package:mask_stock/model/store.dart';
 import 'package:mask_stock/repo/location_repository.dart';
 import 'package:mask_stock/repo/store_repository.dart';
-import 'package:provider/provider.dart';
 
 class StoreModel with ChangeNotifier {
   var isLoading = false;

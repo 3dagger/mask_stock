@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mask_stock/model/store.dart';
 import 'package:mask_stock/ui/view/main_page.dart';
 import 'package:mask_stock/viewmodel/store_model.dart';
 import 'package:provider/provider.dart';

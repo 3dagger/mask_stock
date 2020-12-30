@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 
 class Store {
   String code;
@@ -10,6 +10,7 @@ class Store {
   String stockAt;
   String remainStat;
   String createdAt;
+  num km;
 
   Store(
       {this.code,

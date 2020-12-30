@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:mask_stock/model/store.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RemainStatListTile extends StatelessWidget {
   final Store store;
 
   RemainStatListTile(this.store);
+
   @override
   Widget build(BuildContext context) {
-    return _buildRemainStatWidget(store);
+    return ListTile(
+      title: Text(store.name),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(store.addr),
+          Text('${store.km ?? '0'}km')
+        ],
+      ),
+      // trailing: Text(e.remainStat ?? '매진'), // [elements ?? ''] => elements 의 값이 Null 일 때 ''로 교체,
+      trailing: _buildRemainStatWidget(store),
+      onTap: () {
+        _launchURL(store.lat, store.lng);
+      },
+    );
   }
+
   Widget _buildRemainStatWidget(Store store) {
     var remainStat = '판매중지';
     var description = '판매중지';
@@ -49,4 +66,12 @@ class RemainStatListTile extends StatelessWidget {
     );
   }
 
+  Future _launchURL(double lat, double lng) async {
+    final url = 'http://google.com/maps/search/?api=1&query=$lat,$lng';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

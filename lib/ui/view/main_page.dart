@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mask_stock/model/store.dart';
 import 'package:mask_stock/ui/widget/remain_stat_list_tile.dart';
 import 'package:mask_stock/viewmodel/store_model.dart';
 import 'package:provider/provider.dart';
@@ -31,12 +30,7 @@ class MainPage extends StatelessWidget {
               e.remainStat == 'some' ||
               e.remainStat == 'few';
         }).map((e) {
-          return ListTile(
-            title: Text(e.name),
-            subtitle: Text(e.addr),
-//            trailing: Text(e.remainStat ?? '매진'), // [elements ?? ''] => elements 의 값이 Null 일 때 ''로 교체,
-            trailing: RemainStatListTile(e),
-          );
+          return RemainStatListTile(e);
         }).toList(),
       ),
     );

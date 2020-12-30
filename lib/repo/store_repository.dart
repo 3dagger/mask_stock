@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:latlong/latlong.dart';
 import 'package:mask_stock/model/store.dart';
 
 class StoreRepository {
+  final _distance = Distance();
 
   Future fetch(double lat, double lng) async {
     var stores = List<Store>();
@@ -17,22 +19,35 @@ class StoreRepository {
     // utf8.decode 사용하는 이유 => 한글 깨짐 처리하기 위해, 하지만 전체 데이터가 String 덩어리로 들어옴
     // 이를 해결하기위해 jsonDecode 메서드 사용 => json 형태로 Decode 해줘야 Model 클래스에 담을 수 있다
 
-    var response = await http.get(url);
+    try {
+      var response = await http.get(url);
 
-    final jsonResult = jsonDecode(utf8.decode(response.bodyBytes));
+      if (response.statusCode == 200) {
+        final jsonResult = jsonDecode(utf8.decode(response.bodyBytes));
 
-    final jsonStores = jsonResult['stores'];
+        final jsonStores = jsonResult['stores'];
 
-    // 상태가 변경되었을때 화면을 다시 그려주는 역할 => setState()
-    // 값이 담겨있으면 초기화 (새로고침 기능을 만들기 위해)
-    jsonStores.forEach((e) {
-      stores.add(Store.fromJson(e));
-    });
-//    return stores;
-    return stores.where((e) {
-      return e.remainStat == 'plenty' ||
-          e.remainStat == 'some' ||
-          e.remainStat == 'few';
-    }).toList();
+        // 상태가 변경되었을때 화면을 다시 그려주는 역할 => setState()
+        // 값이 담겨있으면 초기화 (새로고침 기능을 만들기 위해)
+        jsonStores.forEach((e) {
+          final store = Store.fromJson(e);
+          final km = _distance.as(LengthUnit.Kilometer,
+              LatLng(store.lat, store.lng), LatLng(lat, lng));
+          store.km = km;
+          stores.add(store);
+        });
+        return stores.where((e) {
+          return e.remainStat == 'plenty' ||
+              e.remainStat == 'some' ||
+              e.remainStat == 'few';
+        }).toList()
+          ..sort((a, b) => b.km.compareTo(a.km));
+        // List 에는 sort 기능이 있음, return 이 void 임 Sorting 한 결과를 받고싶으면 ..sort
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
   }
 }
